@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, jsonify, send_from_directory
+from flask import Flask, flash, request, redirect, url_for, jsonify, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 import random
 import string
@@ -64,3 +64,15 @@ def upload_file():
 def download_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
+
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('index.html')
+
+@app.route('/static/js/<filename>', methods=['GET'])
+def static_files_js(filename):
+    return send_from_directory('static/js', filename)
+
+@app.route('/static/css/<filename>', methods=['GET'])
+def static_files_css(filename):
+    return send_from_directory('static/css', filename)
