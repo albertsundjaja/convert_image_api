@@ -27,7 +27,7 @@ set the flask app
 ```
 # for windows
 set FLASK_APP=main.py
-# for mac/linus
+# for mac/linux
 export FLASK_APP=main.py
 ```
 
