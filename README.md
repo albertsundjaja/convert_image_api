@@ -1,4 +1,4 @@
-#RGB to Grayscale Converter
+# RGB to Grayscale Converter
 
 ## Installation
 
@@ -41,7 +41,7 @@ Open your browser (Chrome/Firefox preferred), and go to http://localhost:5000
 
 ## Demo
 
-![demo](images/demo.png)
+![demo](images/demo.PNG)
 
 Choose an image file to be converted into grayscale, then click `Convert` button
 
