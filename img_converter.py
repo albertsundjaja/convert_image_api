@@ -8,4 +8,4 @@ def convert_image(image_name):
     """
     image = cv2.imread('temp/' + image_name)
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    cv2.imwrite('temp/' + image_name)
+    cv2.imwrite('temp/' + image_name, gray)

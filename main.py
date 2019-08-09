@@ -1,13 +1,16 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, jsonify
+from flask import Flask, flash, request, redirect, url_for, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 import random
 import string
+from flask_cors import CORS
+import img_converter
 
 UPLOAD_FOLDER = 'temp'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'super secret key'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -34,32 +37,30 @@ def create_random_name(filename, name_length=15):
     random_name = ''.join(random.choice(letters) for i in range(name_length)) + file_extension
     return random_name
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/upload_file', methods=['POST'])
 def upload_file():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            
-            return redirect(request.url)
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        resp = jsonify({'error':'File key is not in sent form data'})
+        return resp, 400
 
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            random_name = create_random_name(file.filename)
-            filename = secure_filename(random_name)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    file = request.files['file']
+    # if user does not select file, browser also
+    # submit an empty part without filename
+    if file.filename == '':
+        resp = jsonify({'error':'Please select a file'})
+        return resp, 400
+        
+    if file and allowed_file(file.filename):
+        random_name = create_random_name(file.filename)
+        filename = secure_filename(random_name)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        img_converter.convert_image(filename)
 
-            resp = jsonify({'filename':filename})
-            return resp
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+        resp = jsonify({'filename':filename})
+        return resp, 200
+
+@app.route('/download_file/<filename>', methods=['GET'])
+def download_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
