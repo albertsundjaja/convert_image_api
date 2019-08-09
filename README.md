@@ -50,3 +50,10 @@ The converted image will be displayed just like the demo above
 ## FEND source
 
 the source code for the React frontend is available in the folder `react_fend`
+
+## Further works
+
+Further improvements to be made:
+
+1. Delete the temp files after some time
+2. Create session-based token so that only the uploader can view the converted file
